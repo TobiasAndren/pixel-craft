@@ -16,10 +16,10 @@ import {
 	putPlayerInChunk,
 	registerPlayerMovement,
 	removePlayerMovement,
-	setPlayerAnimation
+	setPlayerAnimation,
+	handlePlayerAttack
 } from './core/player'
 import { handleWindowResize } from './lib/utils/window'
-import { destroyTreeAtPosition } from './core/treeDestruction'
 
 let view = new Rectangle(0, 0, window.innerWidth, window.innerHeight)
 
@@ -56,16 +56,9 @@ const init = async () => {
 
 	window.addEventListener('keydown', (ev) => {
 		if (ev.key === ' ') {
-			const playerCenterX = player.x + player.width / 2
-			const playerCenterY = player.y - player.height / 2
-			
-			const destroyed = destroyTreeAtPosition(playerCenterX, playerCenterY)
-			
-			if (!destroyed) {
-				console.log('Inget träd att hacka - gå närmare!')
-			}
+			handlePlayerAttack(player)
 		}
-		
+
 		registerPlayerMovement(ev.key)
 	})
 

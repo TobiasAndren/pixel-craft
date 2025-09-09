@@ -17,6 +17,7 @@ import { Chunk } from '../types/tiles'
 import { getVegetationFromGround, hasVegetationCollisions } from './vegetation'
 import { generatePerlinNoise } from '../lib/utils/perlinNoise'
 import { isTileWater } from './water'
+import { destroyTreeAtPosition } from './treeDestruction'
 
 export const PLAYER_WIDTH = 32
 export const PLAYER_HEIGHT = 64
@@ -471,7 +472,7 @@ export const handlePlayerAttack = (player: Sprite) => {
 				console.log(`trädet tog skada! HP: ${vegetation.health}`)
 
 				if (vegetation.health <= 0) {
-					console.log('trädet föll')
+					destroyTreeAtPosition(vegetation.x, vegetation.y)
 				}
 			}
 		}
