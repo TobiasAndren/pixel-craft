@@ -20,6 +20,7 @@ import { isTileWater } from './water'
 
 export const PLAYER_WIDTH = 32
 export const PLAYER_HEIGHT = 64
+const PLAYER_ATTACK_RANGE = 30
 const PLAYER_FRAME_LENGTH = 3
 
 const DEFAULT_SPEED = 1
@@ -420,4 +421,59 @@ export const movePlayerPosition = (player: Sprite, world: Container, ticker: Tic
 
 	animationTimer += ticker.deltaTime / 60
 	handlePlayerAnimation(player)
+}
+
+export const handlePlayerAttack = (player: Sprite) => {
+	const { row, col } = getChunkByGlobalPosition(player.x, player.y)
+	const chunk = getChunk(row, col)
+
+	if (!chunk || !chunk.ground) {
+		return
+	}
+
+	for (const tile of chunk.ground.children) {
+		const vegetation = getVegetationFromGround(chunk, tile.label) as Sprite & {
+			health?: number
+			type?: string
+		}
+		if (!vegetation || vegetation.type !== 'tree') {
+			continue
+		}
+
+		const playerGlobalPos = player.getGlobalPosition()
+
+		const bounds = vegetation.getBounds()
+
+		const trunkHeight = bounds.height * 0.25
+
+		const trunkBounds = {
+			x: bounds.x + bounds.width * 0.25,
+			y: bounds.y + bounds.height - trunkHeight,
+			width: bounds.width * 0.5,
+			height: trunkHeight
+		}
+
+		const dx = Math.max(
+			trunkBounds.x - (playerGlobalPos.x + PLAYER_WIDTH),
+			0,
+			playerGlobalPos.x - (trunkBounds.x + trunkBounds.width)
+		)
+		const dy = Math.max(
+			trunkBounds.y - playerGlobalPos.y,
+			0,
+			playerGlobalPos.y - (trunkBounds.y + trunkBounds.height)
+		)
+		const distance = Math.sqrt(dx * dx + dy * dy)
+
+		if (distance < PLAYER_ATTACK_RANGE) {
+			if (vegetation.health && vegetation.health > 0) {
+				vegetation.health -= 1
+				console.log(`trädet tog skada! HP: ${vegetation.health}`)
+
+				if (vegetation.health <= 0) {
+					console.log('trädet föll')
+				}
+			}
+		}
+	}
 }

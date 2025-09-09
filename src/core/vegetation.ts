@@ -15,6 +15,11 @@ type VegetationSpriteData = {
 	col: number
 }
 
+export interface VegetationSprite extends Sprite {
+	health: number
+	type: 'tree'
+}
+
 const VEGETATION_NOISE = {
 	'dasiy.png': 0.08,
 	'oak-tree.png': 0.05,
@@ -84,7 +89,10 @@ const getTextureFromPerlin = (perlin: number, x: number, y: number) => {
 
 	if (!textureKey || !ASSETS.VEGETATION) return null
 
-	return ASSETS.VEGETATION.textures[textureKey]
+	return {
+		texture: ASSETS.VEGETATION.textures[textureKey],
+		key: textureKey
+	}
 }
 
 export const convertVegetationPosToGround = (x: number, y: number) => {
@@ -109,18 +117,26 @@ export const createVegetationSprite = (data: VegetationSpriteData) => {
 
 	if (!textureData) return null
 
+	const { texture, key } = textureData
+
 	const labelPos = convertVegetationPosToGround(x, y)
 
 	const sprite = new Sprite({
-		texture: textureData,
-		width: textureData.width,
-		height: textureData.height,
+		texture,
+		width: texture.width,
+		height: texture.height,
 		x: x,
 		y: y,
 		anchor: { x: 0.5, y: 1 }, // Trees root are always centered in assets there for we set the bottom center acnhor
 		label: `${labelPos.x}_${labelPos.y}`,
 		zIndex: labelPos.y + TILE_HEIGHT_HALF
-	})
+	}) as VegetationSprite
+
+	if (key === 'oak-tree.png') {
+		sprite.health = 3
+
+		sprite.type = 'tree'
+	}
 
 	return sprite
 }
