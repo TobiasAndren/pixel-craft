@@ -56,7 +56,7 @@ const init = async () => {
 
 	window.addEventListener('keydown', (ev) => {
 		if (ev.key === ' ') {
-			handlePlayerAttack(player)
+			handlePlayerAttack(player, world, app)
 		}
 
 		registerPlayerMovement(ev.key)
