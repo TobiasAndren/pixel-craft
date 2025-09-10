@@ -18,6 +18,7 @@ import { getVegetationFromGround, hasVegetationCollisions } from './vegetation'
 import { generatePerlinNoise } from '../lib/utils/perlinNoise'
 import { isTileWater } from './water'
 import { destroyTreeAtPosition } from './treeDestruction'
+import { showAttackEffect } from './attackEffect'
 
 export const PLAYER_WIDTH = 32
 export const PLAYER_HEIGHT = 64
@@ -424,7 +425,8 @@ export const movePlayerPosition = (player: Sprite, world: Container, ticker: Tic
 	handlePlayerAnimation(player)
 }
 
-export const handlePlayerAttack = (player: Sprite) => {
+export const handlePlayerAttack = (player: Sprite, world: Container, app: any) => {
+	showAttackEffect(player, world, app, animationKey)
 	const { row, col } = getChunkByGlobalPosition(player.x, player.y)
 	const chunk = getChunk(row, col)
 
