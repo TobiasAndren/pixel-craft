@@ -473,6 +473,24 @@ export const handlePlayerAttack = (player: Sprite, world: Container, app: any) =
 				vegetation.health -= 1
 				console.log(`trädet tog skada! HP: ${vegetation.health}`)
 
+				let i = 0
+
+				const originalX = vegetation.x
+
+				const shake = () => {
+					if (!vegetation.destroyed) {
+						i++
+						vegetation.x = originalX + Math.sin(i * 0.5) * 3
+						if (i > 6) {
+							vegetation.x = originalX
+							app.ticker.remove(shake)
+						}
+					} else {
+						app.ticker.remove(shake)
+					}
+				}
+				app.ticker.add(shake)
+
 				if (vegetation.health <= 0) {
 					destroyTreeAtPosition(vegetation.x, vegetation.y)
 				}
